@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.spring.user.dao.ItItemListDAO">
+	<insert id="insert_ItItemList">
+		insert into INITEMLIST(itemcd, insitemlistcd, insamt, insdate, insuser)
+		values(#{param1}, (select  'II' || LPAD(NVL(SUBSTR(MAX(insitemlistcd),3) + 1, 1), 8, '0') from INITEMLIST), #{param2}, sysdate, #{param3})
+	</insert>
+	
+	<select id="get_today_ItItemList" resultType="com.spring.user.vo.ItItemListVO">
+		select il.itemcd, il.ITEMNAME, il.MADENMCD, (select cdname from codemng where cdno = il.MADENMCD) as madename, il.itemunitcd, (select cdname from codemng where cdno = il.itemunitcd) as itemunitname, iil.insamt, iil.insitemlistcd
+		from itemlist il, INITEMLIST iil
+		where il.ITEMCD = iil.ITEMCD AND il.itemclscd = #{param1} AND iil.INSDATE = TO_CHAR(SYSDATE, 'YY/MM/DD')
+	</select>
+	
+	<update id="update_today_ItItemList">
+		update initemlist set insamt = #{param1}
+		where insitemlistcd = #{param2}
+	</update>
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.spring.user.dao.OutItemListDAO">
+	<select id="today_OutItemList_Select" resultType="com.spring.user.vo.OutItemListVO">
+		select itemlist.itemcd, itemlist.itemname, itemlist.madenmcd,
+		(select cdname from CODEMNG where cdno = itemlist.madenmcd) as madename, (select cdname from codemng where cdno = itemlist.itemunitcd) as itemunitname,
+		outitemlist.delivamt, outitemlist.insuser,
+		(select delivname from userinfodetail where id = outitemlist.insuser) as delivname,
+		(select cdname from codemng where cdno = (select relcd from userinfodetail where id = outitemlist.insuser)) as relcd,
+		(select addrcd from userinfodetail where id = outitemlist.insuser) as addrcd,
+		(select addrname from userinfodetail where id = outitemlist.insuser) as addrname,
+		(select mobiletelno from userinfodetail where id = outitemlist.insuser) as mobiletelno,
+		(select hometelno from userinfodetail where id = outitemlist.insuser) as hometelno,	outitemlist.checkyn, outitemlist.delivyn, outitemlist.outitemlistcd
+		from outitemlist, itemlist
+		where itemlist.itemcd = outitemlist.itemcd 
+		AND outitemlist.insdate = TO_CHAR(sysdate, 'YY/MM/DD')
+		order by outitemlist.OUTITEMLISTCD
+	</select>
+	
+	<update id="today_OutItemList_update">
+		update outitemlist set checkuser = #{param1}, checkdate = sysdate, checkyn = #{param2}, delivyn = #{param3}, delivcorpcd = #{param4}, delivno = #{param5}
+		where outitemlistcd = #{param6}
+	</update>
+</mapper>

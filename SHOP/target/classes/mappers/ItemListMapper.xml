@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.spring.user.dao.ItemListDAO">
+	<select id="get_Category_Result" resultType="com.spring.user.vo.ItemListVO">
+		select rownum as recid, itemcd, itemname, madenmcd, (select cdname from codemng where cdno = madenmcd) as madename, itemunitcd, (select cdname from codemng where cdno = itemunitcd) as itemunitname,
+		stockamt,stockyn, USEYN
+		from ITEMLIST
+		where itemclscd = #{param1}
+		order by itemcd
+	</select>
+	
+	<insert id="insert_itemList">
+		insert into itemlist(itemcd, itemname, madenmcd, itemunitcd, stockamt, stockyn, insuser, insdate, useyn, itemclscd)
+		values((select  'I' || LPAD(NVL(SUBSTR(MAX(itemcd),2) + 1, 1), 4, '0') from itemlist), #{param1}, #{param2}, #{param3}, 0, 'Y', #{param4}, sysdate, #{param5}, #{param6})
+	</insert>
+	
+	<update id="update_itemList">
+		update itemlist set itemname = #{param1}, madenmcd = #{param2}, itemunitcd = #{param3}, insuser = #{param4}, insdate = sysdate, useyn = #{param5}
+		where itemcd = #{param6}
+	</update>
+	
+	<update id="update_ItemList_ItItemList">
+		update itemlist set stockamt = stockamt + #{param1}
+		where itemcd = #{param2}
+	</update>
+</mapper>

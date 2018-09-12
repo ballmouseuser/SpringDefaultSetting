@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="com.spring.user.dao.CodeMngDAO">
+	<select id="getRelation" resultType="com.spring.user.vo.CodeMngVO">
+		select * from codemng where upcd = 'C0020'
+	</select>
+	
+	<select id="orderbyCodeMng" resultType="com.spring.user.vo.CodeMngVO">
+		select * from codemng
+		start with cdname = '최상위'
+		connect by prior cdno = upcd
+	</select>
+	
+	<insert id="saveCode">
+		insert into codemng(cdno, cdlvl, upcd, cdname, insuser, insdate, useyn)
+		values((select  'C' || LPAD(NVL(SUBSTR(MAX(cdno),2) + 1, 1), 4, '0') from codemng),#{param1},#{param2},#{param3},#{param4},sysdate,#{param5})
+	</insert>
+	
+	<update id="updateCode">
+		update codemng
+		set cdlvl = #{param1}, upcd = #{param2}, cdname = #{param3}, insuser = #{param4}, insdate = sysdate, useyn = #{param5}
+		where cdno = #{param6}
+	</update>
+	
+	<select id="getItemCategory" resultType="com.spring.user.vo.CodeMngVO">
+		select * from codemng where upcd = 'C0070'
+	</select>
+	
+	<select id="getMakeCompany" resultType="com.spring.user.vo.CodeMngVO">
+		select * from codemng where upcd = 'C0050'
+	</select>
+	
+	<select id="getHowCount" resultType="com.spring.user.vo.CodeMngVO">
+		select * from codemng where upcd = 'C0060'
+	</select>
+	
+	<select id="get_1st_categoryList" resultType="com.spring.user.vo.CodeMngVO">
+		select * from codemng where upcd = #{param1}
+	</select>
+</mapper>
